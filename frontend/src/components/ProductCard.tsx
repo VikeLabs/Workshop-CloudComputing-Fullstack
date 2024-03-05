@@ -12,7 +12,11 @@ type Data = {
   price: string;
 };
 
-type ProductInfo = Loading | Data;
+type Error = {
+  status: "error";
+};
+
+type ProductInfo = Loading | Data | Error;
 
 export interface ProductProps {
   id: number;
@@ -34,6 +38,10 @@ const Product = (props: ProductProps) => {
           image: data.img,
           price: data.pri,
         });
+      } else {
+        setInfo({
+          status: "error",
+        });
       }
     };
 
@@ -41,79 +49,85 @@ const Product = (props: ProductProps) => {
   }, []);
 
   return (
-    <Box
-      sx={{
-        border: "2px solid black",
-        borderRadius: "20px",
-        width: "500px",
-        height: "200px",
-        textAlign: "center",
-        display: "flex",
-        flexDirection: "row",
-      }}
-    >
-      <Box
-        width="50%"
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        gap="5px"
-      >
+    <>
+      {info.status === "error" ? (
+        <Text color="red">That product does not exist.</Text>
+      ) : (
         <Box
-          display="flex"
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-          width="150px"
-          height="150px"
           sx={{
             border: "2px solid black",
-            borderRadius: "5px",
+            borderRadius: "20px",
+            width: "500px",
+            height: "200px",
+            textAlign: "center",
+            display: "flex",
+            flexDirection: "row",
           }}
         >
-          {info.status === "loaded" ? (
-            <Image
-              src={info.image}
-              loading="eager"
-              width="100%"
-              height="100%"
-            />
-          ) : (
-            <Spinner />
-          )}
-        </Box>
-        {info.status === "loaded" ? <Text>{info.name}</Text> : <Spinner />}
-      </Box>
-      <Box
-        width="50%"
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-      >
-        {info.status === "loaded" ? (
-          <Text
-            sx={{
-              fontSize: "26px",
-            }}
+          <Box
+            width="50%"
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            gap="5px"
           >
-            $5
-          </Text>
-        ) : (
-          <Spinner />
-        )}
-        <Button
-          size="lg"
-          colorScheme="blue"
-          onClick={() => {
-            console.log("button pressed");
-          }}
-        >
-          Buy Now
-        </Button>
-      </Box>
-    </Box>
+            <Box
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              width="150px"
+              height="150px"
+              sx={{
+                border: "2px solid black",
+                borderRadius: "5px",
+              }}
+            >
+              {info.status === "loaded" ? (
+                <Image
+                  src={info.image}
+                  loading="eager"
+                  width="100%"
+                  height="100%"
+                />
+              ) : (
+                <Spinner />
+              )}
+            </Box>
+            {info.status === "loaded" ? <Text>{info.name}</Text> : <Spinner />}
+          </Box>
+          <Box
+            width="50%"
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+          >
+            {info.status === "loaded" ? (
+              <Text
+                sx={{
+                  fontSize: "26px",
+                }}
+              >
+                $5
+              </Text>
+            ) : (
+              <Spinner />
+            )}
+            <Button
+              size="lg"
+              colorScheme="blue"
+              onClick={() => {
+                console.log("button pressed");
+              }}
+            >
+              Buy Now
+            </Button>
+          </Box>
+        </Box>
+      )}
+    </>
   );
 };
 
