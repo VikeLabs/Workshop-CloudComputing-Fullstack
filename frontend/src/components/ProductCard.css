@@ -1,0 +1,11 @@
+
+.product-card {
+    border: 2px solid black;
+    border-radius: 20px;
+    width: 500px;
+    height: 400px;
+    text-align: center;
+
+    display: flex;
+    flex-direction: row;
+}
