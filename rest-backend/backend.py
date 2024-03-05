@@ -28,6 +28,7 @@ def product(id):
             "nam": data["name"],
             "img": data["imageUrl"],
             "pri": data["price"],
+            "sel": data["sellerName"]
         }), 200
     except:
         print(f"An error occurred while trying to get product information, id: {id}")

@@ -10,6 +10,7 @@ type Data = {
   name: string;
   image: string;
   price: string;
+  seller: string;
 };
 
 type Error = {
@@ -37,6 +38,7 @@ const Product = (props: ProductProps) => {
           name: data.nam,
           image: data.img,
           price: data.pri,
+          seller: data.sel,
         });
       } else {
         setInfo({
@@ -105,13 +107,16 @@ const Product = (props: ProductProps) => {
             alignItems="center"
           >
             {info.status === "loaded" ? (
-              <Text
-                sx={{
-                  fontSize: "26px",
-                }}
-              >
-                ${info.price}
-              </Text>
+              <>
+                <Text
+                  sx={{
+                    fontSize: "26px",
+                  }}
+                >
+                  ${info.price}
+                </Text>
+                <Text>{info.seller}</Text>
+              </>
             ) : (
               <Spinner />
             )}
