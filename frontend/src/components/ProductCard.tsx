@@ -110,7 +110,7 @@ const Product = (props: ProductProps) => {
                   fontSize: "26px",
                 }}
               >
-                $5
+                ${info.price}
               </Text>
             ) : (
               <Spinner />
