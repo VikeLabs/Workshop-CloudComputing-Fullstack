@@ -20,6 +20,7 @@ type Data = {
   name: string;
   image: string;
   price: string;
+  bidderName?: string;
   seller: string;
 };
 
@@ -49,11 +50,11 @@ const Product = (props: ProductProps) => {
       onMessage: (msg) => {
         const msgData = JSON.parse(msg.data);
         if (info.status === "loaded") {
-          console.log(msgData);
           if (msgData.id === props.id) {
             setInfo({
               ...info,
               price: msgData.newPrice,
+              bidderName: msgData.name,
             });
           }
         }
@@ -149,6 +150,11 @@ const Product = (props: ProductProps) => {
             {info.status === "loaded" ? (
               <>
                 <Text fontSize="26px">${info.price}</Text>
+                {info.bidderName && (
+                  <Text color="grey" fontSize="11px">
+                    bid by {info.bidderName}
+                  </Text>
+                )}
                 <Text>{info.seller}</Text>
               </>
             ) : (
@@ -158,7 +164,6 @@ const Product = (props: ProductProps) => {
               size="lg"
               colorScheme="blue"
               onClick={() => {
-                console.log(`button pressed, current bid amount: ${bidPrice}`);
                 sendMessage(
                   JSON.stringify({
                     type: "bid",
