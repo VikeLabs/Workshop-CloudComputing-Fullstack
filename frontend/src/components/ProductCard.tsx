@@ -1,5 +1,15 @@
-import { Button, Box, Image, Text, Spinner } from "@chakra-ui/react";
+import {
+  Button,
+  Box,
+  Image,
+  Text,
+  Spinner,
+  Input,
+  InputGroup,
+  InputLeftAddon,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import useWebSocket from "react-use-websocket";
 
 type Loading = {
   status: "loading";
@@ -27,12 +37,36 @@ const Product = (props: ProductProps) => {
   const [info, setInfo] = useState<ProductInfo>({
     status: "loading",
   });
+  const [bidPrice, setBidPrice] = useState<number>(0);
+  const [name, setName] = useState<string>("");
+
+  const { sendMessage, readyState } = useWebSocket(
+    `ws://localhost:8080/bidding?id=${props.id}`,
+    {
+      onOpen: () => {
+        console.log("ws opened");
+      },
+      onMessage: (msg) => {
+        const msgData = JSON.parse(msg.data);
+        if (info.status === "loaded") {
+          console.log(msgData);
+          if (msgData.id === props.id) {
+            setInfo({
+              ...info,
+              price: msgData.newPrice,
+            });
+          }
+        }
+      },
+    }
+  );
 
   useEffect(() => {
     const update = async () => {
       const res = await fetch(`http://localhost:5000/product/${props.id}`);
       if (res.status === 200) {
         const data = await res.json();
+
         setInfo({
           status: "loaded",
           name: data.nam,
@@ -40,6 +74,12 @@ const Product = (props: ProductProps) => {
           price: data.pri,
           seller: data.sel,
         });
+
+        sendMessage(
+          JSON.stringify({
+            type: "ready",
+          })
+        );
       } else {
         setInfo({
           status: "error",
@@ -60,7 +100,7 @@ const Product = (props: ProductProps) => {
             border: "2px solid black",
             borderRadius: "20px",
             width: "500px",
-            height: "200px",
+            height: "250px",
             textAlign: "center",
             display: "flex",
             flexDirection: "row",
@@ -103,18 +143,12 @@ const Product = (props: ProductProps) => {
             width="50%"
             display="flex"
             flexDirection="column"
-            justifyContent="center"
+            justifyContent="space-around"
             alignItems="center"
           >
             {info.status === "loaded" ? (
               <>
-                <Text
-                  sx={{
-                    fontSize: "26px",
-                  }}
-                >
-                  ${info.price}
-                </Text>
+                <Text fontSize="26px">${info.price}</Text>
                 <Text>{info.seller}</Text>
               </>
             ) : (
@@ -124,11 +158,45 @@ const Product = (props: ProductProps) => {
               size="lg"
               colorScheme="blue"
               onClick={() => {
-                console.log("button pressed");
+                console.log(`button pressed, current bid amount: ${bidPrice}`);
+                sendMessage(
+                  JSON.stringify({
+                    type: "bid",
+                    id: props.id,
+                    bidPrice,
+                    name,
+                  })
+                );
               }}
             >
-              Buy Now
+              Bid for ${bidPrice}
             </Button>
+            <Input
+              width="80%"
+              placeholder="Name (e.g. Riley)"
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
+            />
+            <Box
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              width="80%"
+            >
+              <InputGroup>
+                <InputLeftAddon>$</InputLeftAddon>
+                <Input
+                  placeholder="Amount (e.g. 50)"
+                  onChange={(e) => {
+                    const r = parseFloat(e.target.value);
+                    if (!isNaN(r)) {
+                      setBidPrice(r);
+                    }
+                  }}
+                />
+              </InputGroup>
+            </Box>
           </Box>
         </Box>
       )}
