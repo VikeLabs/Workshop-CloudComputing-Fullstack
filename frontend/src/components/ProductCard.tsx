@@ -42,7 +42,7 @@ const Product = (props: ProductProps) => {
   const [name, setName] = useState<string>("");
 
   const { sendMessage, readyState } = useWebSocket(
-    `ws://localhost:8080/bidding?id=${props.id}`,
+    `wss://vlws.brennanmcmicking.net/bidding?id=${props.id}`,
     {
       onOpen: () => {
         console.log("ws opened");
@@ -64,7 +64,9 @@ const Product = (props: ProductProps) => {
 
   useEffect(() => {
     const update = async () => {
-      const res = await fetch(`http://localhost:5000/product/${props.id}`);
+      const res = await fetch(
+        `https://vlapi.brennanmcmicking.net/product/${props.id}`
+      );
       if (res.status === 200) {
         const data = await res.json();
 

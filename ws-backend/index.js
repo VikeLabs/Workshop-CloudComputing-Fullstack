@@ -1,9 +1,18 @@
+import { createServer } from "http";
 import { WebSocketServer } from "ws";
 
 let dataStore = {};
 
+let server = createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.write("Healthy!");
+  res.end("\n");
+});
+
+server.listen(443);
+
 const wss = new WebSocketServer({
-  port: 8080,
+  server,
 });
 
 wss.on("connection", (ws, req) => {
@@ -64,3 +73,5 @@ wss.on("connection", (ws, req) => {
     }
   });
 });
+
+console.log("listening on port 443");

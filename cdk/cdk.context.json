@@ -1,0 +1,14 @@
+{
+  "hosted-zone:account=446708209687:domainName=brennanmcmicking.net:region=us-east-1": {
+    "Id": "/hostedzone/Z045204614CI9B8AAMLRQ",
+    "Name": "brennanmcmicking.net."
+  },
+  "availability-zones:account=446708209687:region=us-east-1": [
+    "us-east-1a",
+    "us-east-1b",
+    "us-east-1c",
+    "us-east-1d",
+    "us-east-1e",
+    "us-east-1f"
+  ]
+}
